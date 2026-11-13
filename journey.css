@@ -11,7 +11,7 @@
 @keyframes wave{from{transform:rotate(-9deg)}to{transform:rotate(14deg)}}@keyframes offer{to{transform:translate(-7px,-4px) rotate(-8deg)}}@keyframes drift{from{transform:translate(-4%,-3%) rotate(-6deg)}to{transform:translate(7%,5%) rotate(4deg)}}@keyframes wind{from{transform:translate(-30px,-30px) rotate(0);opacity:0}15%{opacity:1}to{transform:translate(24vw,16vh) rotate(270deg);opacity:0}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
 .side-door{position:absolute;left:70.7%;top:7.5%;width:27.35%;height:51.8%;transform-origin:right;background-color:#decbb2;background-image:repeating-linear-gradient(90deg,#806657 0 5px,transparent 5px 16.6%),repeating-linear-gradient(0deg,#8b7465 0 4px,transparent 4px 16.66%);border:5px solid #67564c}
-#friends{inset:auto;left:5%;bottom:5%;width:90%;height:auto;aspect-ratio:1280/360}#friends svg{display:block}#tabletButton{left:45.7%;top:40.5%;width:7.8%;height:18%;background:#badad7a0}#tabletButton:after{content:'â–¶';color:#324d58}#envelopeButton{left:62.5%;top:45%;height:10%;border-radius:2px}#callout{left:54%;top:-7%}
+#friends{inset:auto;left:5%;bottom:5%;width:90%;height:auto;aspect-ratio:1280/360}#friends svg{display:block}#tabletButton{left:45.7%;top:40.5%;width:7.8%;height:18%;background:#badad7a0}#tabletButton:after{content:'';display:inline-block;width:0;height:0;border-block:.48em solid transparent;border-left:.8em solid #324d58}#envelopeButton{left:62.5%;top:45%;height:10%;border-radius:2px}#callout{left:54%;top:-7%}
 .game[data-scene=flight] #terrace{opacity:.5}.game[data-scene=opening] #terrace{animation:terrace-shot 1.8s 11s both}
 .game[data-scene=flight] #atelier{transform-origin:36.9% 50.3%}
 
