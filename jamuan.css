@@ -20,7 +20,7 @@
 .shutter.right{left:50%;background:linear-gradient(96deg,#71637299,#c6998199)}
 .game:not([data-scene=arrival]) .shutter.left{transform:translateX(-102%)}.game:not([data-scene=arrival]) .shutter.right{transform:translateX(102%)}
 .game[data-scene=arrival] .shutter.left{transform:translateX(-12%)}.game[data-scene=arrival] .shutter.right{transform:translateX(78%)}
-.bouquet,.camera-prop,.teapot,.cake,.lantern{transform-box:fill-box;transform-origin:center bottom}.lantern{transform-origin:50% 0;animation:sway 4.8s ease-in-out infinite alternate}.flame{transform-box:fill-box;transform-origin:center bottom;animation:flicker 1.4s ease-in-out infinite alternate}.teapot path[stroke="#f2dec7"]{stroke-dasharray:16 7;animation:steam 2s linear infinite}
+.bouquet,.camera-prop,.teapot,.cake,.lantern{transform-box:fill-box;transform-origin:center bottom}.lantern{transform-origin:50% 0;animation:sway 4.8s ease-in-out infinite alternate}.flame{transform-box:fill-box;transform-origin:center bottom;animation:flicker 1.4s ease-in-out infinite alternate}.teapot path[stroke="#f2dec7"]{stroke-dasharray:16 7;animation:steam 2s linear infinite}.bouquet,.camera-prop,.gift{cursor:pointer}
 .hot{padding:7px 12px;transform:translate(-50%,-100%)}.hot i{width:27px;height:27px;font-size:17px;background:#243c4bd9}.dialogue{border-color:#8ca7a5;border-left-color:#efbd85;background:linear-gradient(110deg,#233a4df5,#344457f5)}.dialogue h2{font-family:DM,sans-serif}
 @keyframes sway{from{transform:rotate(-3deg)}to{transform:rotate(3deg)}}@keyframes flicker{from{transform:scale(.85,.94)}to{transform:scale(1.08,1.09)}}@keyframes steam{to{stroke-dashoffset:46}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}

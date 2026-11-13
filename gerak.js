@@ -40,3 +40,7 @@ function propEffect(name){
   const [x,y]=centers[name];
   for(let i=0;i<22;i++){const a=i*Math.PI/11;sparks.push({x,y,dx:Math.cos(a)*42,dy:Math.sin(a)*44-20,life:1,color:'#ffd897'});}
 }
+for(const name of ['bouquet','camera-prop','gift']){
+  const prop=document.querySelector('#atelier .'+name);
+  if(prop)prop.addEventListener('click',()=>propEffect(name));
+}
