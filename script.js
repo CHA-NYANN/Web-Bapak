@@ -2,13 +2,8 @@ const $=id=>document.getElementById(id);
 const gameRoot=$('game'), set=$('set'), props=$('props'), shade=$('shade');
 const calm=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
 const pause=ms=>new Promise(resolve=>setTimeout(resolve,calm()?Math.min(ms,130):ms));
-let part=2, frame=0, first=0, seen=new Set(), busy=false, page=0;
+let part=2, frame=0, first=0, seen=new Set(), busy=false;
 let room='loft', videoSession=0;
-const letterPages=[
-  ['Pak Hanny yang kami sayangi,','Di foto-foto almet biru itu, yang terlihat memang kami. Di balik keberanian untuk maju dan mempresentasikan karya, ada waktu yang Bapak luangkan untuk membimbing kami. Terima kasih, Pak. Keberhasilan itu juga punya cerita tentang Bapak.'],
-  ['Yang kami bawa pulang','Kalau membuka album ini beberapa tahun lagi, rasanya kami juga akan mengingat hal-hal kecilnya. Tirai biru di lab. Kursi yang ditarik mendekat supaya semua masuk foto. Satu meja yang penuh waktu makan bersama.'],
-  ['Selamat ulang tahun, Pak Hanny.','Semoga Bapak selalu sehat, punya banyak waktu untuk hal-hal yang Bapak sukai, dan tahu betapa berartinya Bapak bagi kami. Dengan sayang, anak-anak bimbingan Bapak.'],
-];
 function scene(id){
   gameRoot.dataset.scene=id;
   const overlay=['gallery','ending','screening'].includes(id);
@@ -33,15 +28,40 @@ function drawRoom(name){
       const im=new Image();im.src=p.src;im.alt='';b.append(im);props.append(b);
     });
   }else if(name==='salon'){
+    const portrait=new Image();
+    portrait.className='family-portrait';
+    portrait.src='asset/1000265991.jpg.jpeg';
+    portrait.alt='Foto keluarga lama di dalam pigura kayu di atas kotatsu';
+    props.append(portrait);
     const cam=button('Lihat foto di kamera','film-camera',()=>openAlbum(1,0,cam));
     cam.innerHTML='<span>Lihat kamera</span>';props.append(cam);const door=document.createElement('div');door.className='side-door';props.append(door);
   }else{
-    photos[0].forEach((p,i)=>{
-      const b=button('Kenangan kelulusan: '+p.caption,'petal-card',()=>openAlbum(0,i,b));
-      b.style.cssText='left:'+(5+i%7*12.3+(i>6?5:0))+'%;top:'+(i<7?28+Math.sin(i)*5:53+Math.sin(i)*5)+'%;--delay:'+(-i*.83)+'s';
-      const im=new Image();im.src=p.src;im.alt='';b.append(im);props.append(b);
-    });
     addPetals();
+  }
+}
+async function graduationFlight(){
+  const leaf=document.createElement('figure');
+  leaf.className='memory-petal';
+  const print=new Image();
+  leaf.append(print);
+  for(const [index,photo] of photos[0].entries()){
+    print.src=photo.src;
+    print.alt=photo.caption;
+    await print.decode().catch(()=>{});
+    leaf.classList.toggle('portrait',photo.h>photo.w);
+    leaf.style.top=(index%2===0?'44%':'50%');
+    props.append(leaf);
+    if(calm()){
+      await new Promise(resolve=>setTimeout(resolve,3600));
+    }else{
+      await move(leaf,[
+        {transform:'translate(-155%,54%) rotate(-21deg) scale(.38)',opacity:0},
+        {transform:'translate(-63%,-43%) rotate(-4deg) scale(.97)',opacity:1,offset:.26},
+        {transform:'translate(-38%,-51%) rotate(2deg) scale(1)',opacity:1,offset:.72},
+        {transform:'translate(170%,-110%) rotate(19deg) scale(.62)',opacity:0}
+      ],5300,'linear');
+    }
+    leaf.remove();
   }
 }
 function addPetals(){
@@ -62,20 +82,24 @@ async function travelTo(next){
   drawRoom(next);exit.cancel();
   await move(set,[{transform:staircase?'translateY(24%) scale(1.22)':'translateX(12%) scale(.85)',opacity:.2},{transform:'none',opacity:1}],1100);
   if(next==='garden')await move($('scenery'),[{transform:'scale(.96)'},{transform:'scale(1.06)',transformOrigin:'35% 42%'}],1100,'ease-out',true);
-  props.inert=false;props.querySelector('button').focus({preventScroll:true});
+  props.inert=false;
+  if(next==='garden'){
+    await graduationFlight();
+    await sitDown();
+  }else props.querySelector('button').focus({preventScroll:true});
 }
 function renderFrame(){
   const group=photos[part],p=group[frame];seen.add(frame);
   $('photo').src=p.src;$('photo').alt=p.caption;$('under-photo').src=group[(frame+1)%group.length].src;
   $('count').textContent=(seen.size===group.length?group.length:((frame-first+group.length)%group.length)+1)+' / '+group.length;
   $('finishAlbum').hidden=seen.size!==group.length;
-  $('finishAlbum').textContent=['Duduk di teras','Letakkan kamera','Letakkan foto'][part];
+  $('finishAlbum').textContent=part===1?'Letakkan kamera':'Letakkan foto';
 }
 async function openAlbum(which,index,trigger){
   if(busy)return;
   busy=true;part=which;first=frame=index;seen=new Set();
   const start=trigger.getBoundingClientRect();
-  $('gallery').className='layer gallery '+['petal','camera','paper'][part];renderFrame();scene('gallery');
+  $('gallery').className='layer gallery '+(part===1?'camera':'paper');renderFrame();scene('gallery');
   const end=$('pile').getBoundingClientRect();
   await move($('pile'),[{transform:'translate('+(start.x+start.width/2-end.x-end.width/2)+'px,'+(start.y+start.height/2-end.y-end.height/2)+'px) scale('+Math.min(.8,start.width/end.width)+')'},{transform:'none'}],550);
   busy=false;$('front').focus({preventScroll:true});
@@ -96,8 +120,6 @@ async function flip(by){
       await move(front,[{transform:out},{transform:'rotate(4deg) scale(.96)'}],320);
     }else if(part===1){
       await move($('photo'),[{filter:'brightness(1)'},{filter:'brightness(.08)'}],125);
-    }else{
-      await move(front,[{transform:'none',opacity:1},{transform:'translate(18%,-14%) rotate(11deg)',opacity:0}],370);
     }
     frame=next;renderFrame();
     if(part!==2)await move(front,[{opacity:.15},{opacity:1}],220);
@@ -105,7 +127,7 @@ async function flip(by){
 }
 async function finishAlbum(){
   if(busy||seen.size!==photos[part].length)return;busy=true;
-  if(part===2)await travelTo('salon');else if(part===1)await travelTo('garden');else await sitDown();
+  await travelTo(part===2?'salon':'garden');
   busy=false;
 }
 async function sitDown(){
@@ -120,7 +142,7 @@ const video=$('messageVideo'), music=document.querySelector('audio');
 async function takeTablet(){
   if(busy)return;busy=true;const token=++videoSession;
   $('callout').hidden=true;
-  const push=await move($('friends'),[{transform:'none'},{transform:'scale(7)',transformOrigin:'49% 44%'}],1050,'ease-in',true);
+  const push=await move($('friends'),[{transform:'none'},{transform:'scale(7)',transformOrigin:'41.1% 57%'}],1050,'ease-in',true);
   scene('screening');push.cancel();video.hidden=false;$('noVideo').hidden=true;music.pause();
   video.onerror=()=>{if(token!==videoSession)return;video.hidden=true;$('noVideo').hidden=false;$('returnTablet').focus();};
   video.onended=returnTablet;
@@ -130,17 +152,43 @@ async function returnTablet(){
   if(busy||gameRoot.dataset.scene!=='screening')return;busy=true;videoSession++;
   video.onerror=null;video.onended=null;video.pause();video.removeAttribute('src');video.load();music.play().catch(()=>{});
   scene('travel');$('tabletButton').hidden=true;
-  await move($('friends'),[{transform:'scale(7)',transformOrigin:'49% 44%'},{transform:'none'}],1000);
+  await move($('friends'),[{transform:'scale(7)',transformOrigin:'41.1% 57%'},{transform:'none'}],1000);
   $('friends').classList.add('giving');$('envelopeButton').hidden=false;
-  await move($('friends'),[{transform:'none'},{transform:'translateX(-6%) scale(1.12)',transformOrigin:'70% 52%'}],620,'ease-out',true);
+  await move($('friends'),[{transform:'none'},{transform:'translateX(-4%) scale(1.12)',transformOrigin:'57% 58%'}],620,'ease-out',true);
   busy=false;$('envelopeButton').focus({preventScroll:true});
 }
-function readLetter(){
-  $('letter-title').textContent=letterPages[page][0];$('letter-body').textContent=letterPages[page][1];
-  $('advance').textContent=page===2?'Lipat surat':'Buka lipatan berikutnya';
+async function openLetter(){
+  if(busy)return;
+  busy=true;
+  const hand=$('envelopeButton').getBoundingClientRect();
+  $('envelopeButton').hidden=true;
+  $('friends').classList.add('delivered');
+  $('advance').hidden=true;
+  scene('ending');
+  const envelope=document.querySelector('.letter-envelope');
+  const target=envelope.getBoundingClientRect();
+  const dx=hand.left+hand.width/2-target.left-target.width/2;
+  const dy=hand.top+hand.height/2-target.top-target.height/2;
+  await move(envelope,[{transform:`translate(${dx}px,${dy}px) scale(${hand.width/target.width}) rotate(-6deg)`},{transform:'none'}],540);
+  await move(envelope.querySelector('.flap'),[{transform:'rotateX(0deg)'},{transform:'rotateX(178deg)'}],460,'ease-in-out',true);
+  const letter=document.querySelector('.letter');
+  const folds=letter.querySelectorAll('.fold');
+  letter.classList.add('unfolding');
+  const lower=move(envelope,[{transform:'none',opacity:1},{transform:'translateY(55%)',opacity:0}],650,'ease-in',true);
+  await move(letter,[{transform:'translateY(32%) scale(.57)'},{transform:'none'}],660);
+  for(const fold of [...folds].slice(1)){
+    await move(fold,[{opacity:0,transform:'rotateX(-89deg)'},{opacity:1,transform:'none'}],430,'ease-out',true);
+  }
+  await lower;
+  $('advance').hidden=false;busy=false;$('advance').focus({preventScroll:true});
 }
 async function closeStory(){
-  busy=true;scene('travel');$('friends').hidden=true;drawRoom('garden');props.replaceChildren();addPetals();
+  busy=true;
+  await move(document.querySelector('.letter'),[{transform:'none',opacity:1},{transform:'rotateX(65deg) scale(.6)',opacity:0}],420);
+  scene('travel');$('friends').classList.remove('delivered');$('friends').hidden=true;
+  document.querySelector('.letter').classList.remove('unfolding');
+  $('ending').getAnimations({subtree:true}).forEach(anim=>anim.cancel());
+  drawRoom('garden');
   await move(set,[{transform:'scale(1.1)'},{transform:'translate(18%,5%) scale(1.45)',opacity:0}],1000);
   drawRoom('salon');props.replaceChildren();
   await move(set,[{opacity:.1,transform:'translateX(12%) scale(1.08)'},{opacity:1,transform:'none'}],800);
@@ -149,8 +197,8 @@ async function closeStory(){
   $('enter').disabled=false;scene('arrival');$('enter').focus({preventScroll:true});busy=false;
 }
 $('tabletButton').onclick=takeTablet;$('returnTablet').onclick=returnTablet;
-$('envelopeButton').onclick=async()=>{if(busy)return;busy=true;page=0;readLetter();scene('ending');await move(document.querySelector('.letter'),[{transform:'scale(.22) rotate(-8deg)',opacity:0},{transform:'none',opacity:1}],620);busy=false;$('advance').focus();};
-$('advance').onclick=()=>{if(busy)return;if(page<2){page++;readLetter();}else closeStory();};
+$('envelopeButton').onclick=openLetter;
+$('advance').onclick=()=>{if(!busy)closeStory();};
 $('prev').onclick=()=>flip(-1);$('next').onclick=$('front').onclick=()=>flip(1);$('finishAlbum').onclick=finishAlbum;
 $('enter').onclick=async()=>{if(busy)return;busy=true;$('enter').disabled=true;scene('opening');await playOpening();await enterLoft();busy=false;};
 
