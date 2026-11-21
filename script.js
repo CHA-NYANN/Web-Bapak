@@ -6,7 +6,7 @@ let part=2, frame=0, first=0, seen=new Set(), busy=false;
 let room='loft';
 // Isi dengan ID file Google Drive (bagikan sebagai "Siapa saja yang memiliki link") setelah videonya diunggah.
 // ID-nya adalah bagian di URL Drive antara "/d/" dan "/view", contoh: https://drive.google.com/file/d/INI_ID_NYA/view
-const DRIVE_VIDEO_ID='';
+const DRIVE_VIDEO_ID='1eWpX9MSApxJlSgVSnjMa7xahyf2_cnnI';
 function scene(id){
   gameRoot.dataset.scene=id;
   const overlay=['gallery','ending','screening'].includes(id);

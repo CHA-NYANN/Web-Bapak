@@ -58,7 +58,7 @@
   font:clamp(12px,min(1.22vw,2.16vh),18px)/1.48 Georgia,serif;
   background:none;box-shadow:none;visibility:hidden;transform-origin:center;
 }
-.stationery .letter.unfolding {visibility:visible}
+.stationery .letter.unfolding {visibility:visible;max-height:80dvh;overflow-y:auto}
 .fold {
   padding:1em 2.5em 1.05em;background:#faecd5;transform-origin:top;
   box-shadow:1px 4px 9px #281d2526;
@@ -66,6 +66,8 @@
 .fold:first-child {background:linear-gradient(#fff5df,#faedd7 94%,#e6d3b9)}
 .fold:nth-child(2) {background:linear-gradient(#ebdac4,#f9ecd5 12%,#f6e8d0 95%,#e7d6bd)}
 .fold:nth-child(3) {background:linear-gradient(#ecdbc4,#fbefd9 15%,#fff3dd)}
+.fold:nth-child(4) {background:linear-gradient(#f0ddc0,#fbeed7 10%,#f2e2c5 92%,#dfc7a8)}
+.fold:nth-child(5) {background:linear-gradient(#e8d2b0,#f7e9cd 14%,#fdf3dd 90%,#ecd8b8)}
 .fold:not(:first-child) {opacity:0}
 .fold p {margin:0;max-width:none}
 .fold h2 {font:italic 400 1.65em/1.2 Georgia,serif;color:#784948;margin:0 0 .42em}
