@@ -77,6 +77,12 @@ const photos = [
       "caption": "Senyum di depan tirai biru",
       "w": 1200,
       "h": 1600
+    },
+    {
+      "src": "album/DSC_0014.webp",
+      "caption": "Berfoto berdua seusai wisuda",
+      "w": 1600,
+      "h": 1063
     }
   ],
   [
@@ -157,6 +163,18 @@ const photos = [
       "caption": "Swafoto di sela kegiatan",
       "w": 1600,
       "h": 900
+    },
+    {
+      "src": "album/1f4b28e1-34ad-4dee-89ae-8ff6d6be48ec.webp",
+      "caption": "Satu lab merayakan ulang tahun Pak Hanny",
+      "w": 1600,
+      "h": 1200
+    },
+    {
+      "src": "album/7811c41c-0dd7-48e7-8c7c-56f7b59f985b.webp",
+      "caption": "Gaya kompak menunjuk bersama-sama",
+      "w": 1600,
+      "h": 1200
     }
   ],
   [

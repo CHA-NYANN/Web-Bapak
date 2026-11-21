@@ -3,7 +3,10 @@ const gameRoot=$('game'), set=$('set'), props=$('props'), shade=$('shade');
 const calm=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
 const pause=ms=>new Promise(resolve=>setTimeout(resolve,calm()?Math.min(ms,130):ms));
 let part=2, frame=0, first=0, seen=new Set(), busy=false;
-let room='loft', videoSession=0;
+let room='loft';
+// Isi dengan ID file Google Drive (bagikan sebagai "Siapa saja yang memiliki link") setelah videonya diunggah.
+// ID-nya adalah bagian di URL Drive antara "/d/" dan "/view", contoh: https://drive.google.com/file/d/INI_ID_NYA/view
+const DRIVE_VIDEO_ID='';
 function scene(id){
   gameRoot.dataset.scene=id;
   const overlay=['gallery','ending','screening'].includes(id);
@@ -138,19 +141,23 @@ async function sitDown(){
   await move($('friends'),[{transform:'translateY(16%)',opacity:0},{transform:'none',opacity:1}],850);
   $('tabletButton').focus({preventScroll:true});
 }
-const video=$('messageVideo'), music=document.querySelector('audio');
+const drive=$('driveVideo'), music=document.querySelector('audio');
 async function takeTablet(){
-  if(busy)return;busy=true;const token=++videoSession;
+  if(busy)return;busy=true;
   $('callout').hidden=true;
   const push=await move($('friends'),[{transform:'none'},{transform:'scale(7)',transformOrigin:'41.1% 57%'}],1050,'ease-in',true);
-  scene('screening');push.cancel();video.hidden=false;$('noVideo').hidden=true;music.pause();
-  video.onerror=()=>{if(token!==videoSession)return;video.hidden=true;$('noVideo').hidden=false;$('returnTablet').focus();};
-  video.onended=returnTablet;
-  video.src='asset/ucapan.mp4';video.load();video.play().catch(()=>{});busy=false;
+  scene('screening');push.cancel();music.pause();
+  if(DRIVE_VIDEO_ID){
+    drive.src='https://drive.google.com/file/d/'+DRIVE_VIDEO_ID+'/preview';
+    drive.hidden=false;$('noVideo').hidden=true;
+  }else{
+    drive.hidden=true;drive.removeAttribute('src');$('noVideo').hidden=false;
+  }
+  busy=false;$('returnTablet').focus({preventScroll:true});
 }
 async function returnTablet(){
-  if(busy||gameRoot.dataset.scene!=='screening')return;busy=true;videoSession++;
-  video.onerror=null;video.onended=null;video.pause();video.removeAttribute('src');video.load();music.play().catch(()=>{});
+  if(busy||gameRoot.dataset.scene!=='screening')return;busy=true;
+  drive.hidden=true;drive.removeAttribute('src');music.play().catch(()=>{});
   scene('travel');$('tabletButton').hidden=true;
   await move($('friends'),[{transform:'scale(7)',transformOrigin:'41.1% 57%'},{transform:'none'}],1000);
   $('friends').classList.add('giving');$('envelopeButton').hidden=false;
